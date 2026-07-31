@@ -1,0 +1,95 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - 00-bootstrap/**
+      - 10-network-security/**
+      - 20-aks-platform/**
+      - 30-platform-addons/**
+
+parameters:
+  - name: tfDir
+    displayName: Terraform directory
+    type: string
+    default: 00-bootstrap
+    values:
+      - 00-bootstrap
+      - 10-network-security
+      - 20-aks-platform
+      - 30-platform-addons
+
+  - name: runApply
+    displayName: Run terraform apply
+    type: boolean
+    default: false
+
+variables:
+  azureServiceConnection: sc-azure-aks-ent01
+  terraformVersion: 1.9.8
+
+pool:
+  name: son-linux-pool
+
+stages:
+  - stage: Validate
+    jobs:
+      - job: TerraformValidate
+        steps:
+          - checkout: self
+          - bash: |
+              set -euo pipefail
+              cd '${{ parameters.tfDir }}'
+              terraform fmt -check
+              terraform init -backend=false
+              terraform validate
+            displayName: Terraform fmt and validate
+
+  - stage: Plan
+    dependsOn: Validate
+    jobs:
+      - job: TerraformPlan
+        steps:
+          - checkout: self
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: $(azureServiceConnection)
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -euo pipefail
+                cd '${{ parameters.tfDir }}'
+                terraform init
+                terraform plan -input=false -out=tfplan
+            displayName: Terraform plan
+
+          - publish: '${{ parameters.tfDir }}/tfplan'
+            artifact: terraform-plan
+
+  - ${{ if eq(parameters.runApply, true) }}:
+      - stage: Apply
+        dependsOn: Plan
+        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+        jobs:
+          - deployment: TerraformApply
+            environment: aks-ent01-dev
+            strategy:
+              runOnce:
+                deploy:
+                  steps:
+                    - checkout: self
+                    - download: current
+                      artifact: terraform-plan
+                    - task: AzureCLI@2
+                      inputs:
+                        azureSubscription: $(azureServiceConnection)
+                        scriptType: bash
+                        scriptLocation: inlineScript
+                        inlineScript: |
+                          set -euo pipefail
+                          cd '${{ parameters.tfDir }}'
+                          terraform init
+                          cp '$(Pipeline.Workspace)/terraform-plan/tfplan' ./tfplan
+                          terraform apply -input=false -auto-approve tfplan
+                      displayName: Terraform apply
