@@ -14,8 +14,15 @@ provider "azurerm" {
 }
 
 variable "subscription_id" { type = string }
-variable "resource_group_name" { type = string; default = "rg-aks-ent01-dev-krc" }
-variable "location" { type = string; default = "koreacentral" }
+variable "resource_group_name" {
+  type    = string
+  default = "rg-aks-ent01-dev-krc"
+}
+
+variable "location" {
+  type    = string
+  default = "koreacentral"
+}
 
 resource "azurerm_virtual_network" "hub" {
   name                = "vnet-aks-ent01-hub-dev-krc"

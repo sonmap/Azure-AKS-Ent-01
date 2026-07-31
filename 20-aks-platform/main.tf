@@ -31,10 +31,20 @@ data "azurerm_log_analytics_workspace" "main" {
 }
 
 variable "subscription_id" { type = string }
-variable "resource_group_name" { type = string; default = "rg-aks-ent01-dev-krc" }
-variable "location" { type = string; default = "koreacentral" }
+variable "resource_group_name" {
+  type    = string
+  default = "rg-aks-ent01-dev-krc"
+}
+
+variable "location" {
+  type    = string
+  default = "koreacentral"
+}
 variable "ssh_public_key" { type = string }
-variable "admin_group_object_ids" { type = list(string); default = [] }
+variable "admin_group_object_ids" {
+  type    = list(string)
+  default = []
+}
 
 resource "azurerm_container_registry" "main" {
   name                = "acraksent01dev"

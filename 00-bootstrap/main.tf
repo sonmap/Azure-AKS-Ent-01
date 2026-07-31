@@ -14,8 +14,15 @@ provider "azurerm" {
 }
 
 variable "subscription_id" { type = string }
-variable "location" { type = string; default = "koreacentral" }
-variable "prefix" { type = string; default = "aks-ent01" }
+variable "location" {
+  type    = string
+  default = "koreacentral"
+}
+
+variable "prefix" {
+  type    = string
+  default = "aks-ent01"
+}
 
 locals {
   tags = {

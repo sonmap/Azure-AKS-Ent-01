@@ -18,8 +18,15 @@ provider "azurerm" {
 }
 
 variable "subscription_id" { type = string }
-variable "resource_group_name" { type = string; default = "rg-aks-ent01-dev-krc" }
-variable "aks_name" { type = string; default = "aks-aks-ent01-dev-krc" }
+variable "resource_group_name" {
+  type    = string
+  default = "rg-aks-ent01-dev-krc"
+}
+
+variable "aks_name" {
+  type    = string
+  default = "aks-aks-ent01-dev-krc"
+}
 
 data "azurerm_kubernetes_cluster" "main" {
   name                = var.aks_name
