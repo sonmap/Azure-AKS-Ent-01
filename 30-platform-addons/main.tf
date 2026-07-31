@@ -21,17 +21,6 @@ variable "subscription_id" { type = string }
 variable "resource_group_name" { type = string; default = "rg-aks-ent01-dev-krc" }
 variable "aks_name" { type = string; default = "aks-aks-ent01-dev-krc" }
 
-resource "azurerm_kubernetes_cluster_extension" "flux_placeholder" {
-  name           = "cluster-platform-ready"
-  cluster_id     = data.azurerm_kubernetes_cluster.main.id
-  extension_type = "microsoft.flux"
-  release_train  = "Stable"
-  configuration_settings = {
-    "image-automation-controller.enabled" = "false"
-    "image-reflector-controller.enabled"  = "false"
-  }
-}
-
 data "azurerm_kubernetes_cluster" "main" {
   name                = var.aks_name
   resource_group_name = var.resource_group_name
