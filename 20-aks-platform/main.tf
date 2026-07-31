@@ -30,7 +30,11 @@ data "azurerm_log_analytics_workspace" "main" {
   resource_group_name = var.resource_group_name
 }
 
-variable "subscription_id" { type = string }
+variable "subscription_id" {
+  description = "Azure subscription ID"
+  type        = string
+  default     = "18fbfa69-3481-4395-845e-d3f7d4583562"
+}
 variable "resource_group_name" {
   type    = string
   default = "rg-aks-ent01-dev-krc"
