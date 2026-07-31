@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tc01-legacy-stack
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/sonmap/Azure-AKS-Ent-01.git
+    targetRevision: main
+    path: deploy/tc01
+    directory:
+      recurse: true
+      include: legacy-stack.rendered.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tc01
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
