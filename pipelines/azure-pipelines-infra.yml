@@ -26,7 +26,7 @@ parameters:
     default: false
 
 variables:
-  azureServiceConnection: sc-azure-aks-ent01
+  azureServiceConnection: sc-azure-land03-platform
   terraformVersion: 1.9.8
 
 pool:
