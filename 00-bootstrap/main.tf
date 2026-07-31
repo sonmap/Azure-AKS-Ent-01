@@ -13,7 +13,12 @@ provider "azurerm" {
   subscription_id = var.subscription_id
 }
 
-variable "subscription_id" { type = string }
+variable "subscription_id" {
+  description = "Azure subscription ID"
+  type        = string
+  default     = "18fbfa69-3481-4395-845e-d3f7d4583562"
+}
+
 variable "location" {
   type    = string
   default = "koreacentral"
